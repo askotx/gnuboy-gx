@@ -472,7 +472,7 @@ int loadsavemenu (int which)
  * Emulator Options Menu
  *
  ****************************************************************************/
-int Emu_options ()
+int emu_options ()
 {
   int quit = 0;
   int ret;
@@ -694,7 +694,7 @@ void MainMenu ()
         break;
 
       case 3:  /*** Emulator Options */
-        Emu_options();
+        emu_options();
         break;
 
       case 4:  /*** SD/PSO/TP Reload ***/

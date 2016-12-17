@@ -10,6 +10,9 @@
 #include "font.h"
 #include "config.h"
 
+#include "history.h"
+#include "file_fat.h"
+
 #include <malloc.h>
 
 #define MAXROMSIZE 8388608
@@ -20,6 +23,9 @@ int new_game;
 
 extern void MainMenu ();
 extern void legal();
+
+extern void memfile_autosave();
+extern void memfile_autoload();
 
 void reload_rom()
 {
@@ -44,6 +50,40 @@ int main(int argc, char *argv[])
   
   /* try to load Config File */
   config_load();
+  
+  /* file autoloading */
+  int autoload = 0;
+
+  int size = 0;
+
+  /* autodetect loader arguments */
+  if ((argc >= 3) && (argv[1] != NULL) && (argv[2] != NULL))
+  {
+    /* automatically load any file passed as argument */
+    autoload = 1;
+
+    /* add the file to the top of the history. */
+    history_add_file(argv[1], argv[2]);
+  }
+
+  /* automatically load first file from history list if requested */
+  if (autoload)
+  {
+    size = FAT_Open(TYPE_RECENT,gbrom);
+    if (size)
+    {
+      gbromsize = size;
+      memfile_autosave();
+      reload_rom();
+      memfile_autoload(); 
+    }
+  }
+
+  /* show disclaimer before entering menu */
+  if (!(autoload && size))
+  {
+    legal();
+  }
 
   /* Wait for loaded rom */
   while (gbromsize == 0) MainMenu();
@@ -54,14 +94,4 @@ int main(int argc, char *argv[])
   /* never reached */
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
 

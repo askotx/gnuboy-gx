@@ -1,0 +1,5 @@
+/build_wii
+/build_cube
+/executables
+*.dol
+*.elf
